@@ -31,10 +31,7 @@ class QueryEngine {
 	public $UPDATED = ['UNIX_TIMESTAMP(updated)', 'updated'];
 
 
-	function __construct($table = null, $alias = null, $mode = null, $connection = null) {
-		if ($connection != null) {
-			$this->
-		}
+	function __construct($table = null, $alias = null, $mode = null) {
 		$this->from($table, $alias);
 		$this->mode($mode);
 		return $this;
@@ -247,9 +244,13 @@ class QueryEngine {
 	}
 
 	// UPDATED (common search)
-	public function updated($from = null) {
+	public function updated($from = null, $field = false, $value = false) {
 		if ($from) { $this->reset($from); }
-		return $this->select([$this->UPDATED])->order('updated DESC')->limit(1)->getCol(0);
+		$this->select([$this->UPDATED]);
+		if (is_string($field) && (is_string($value) || is_numeric($value))) {
+			$this->where($field.'=?', $value);
+		}
+		return $this->order('updated DESC')->limit(1)->getCol(0);
 	}
 
 	// LAST INSERT ID (common search)
